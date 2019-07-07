@@ -6,14 +6,14 @@ THE IANA /etc FILES PACKAGE
 ABOUT
 
     The iana-etc package installs services(5) and protocols(5) using data from
-    the Internet Assigned Numbers Authority <http://www.iana.org/>.  In future,
+    the Internet Assigned Numbers Authority <https://www.iana.org/>.  In future,
     other such files may be added.
 
     Included are snapshots of the data from the IANA, scripts to transform that
     data into the needed formats, and scripts to fetch the latest data.
 
     Maintainer: Seth W. Klein <sk@sethwklein.net>
-    Home Page: http://www.sethwklein.net/projects/iana-etc/
+    Home Page: http://sethwklein.net/iana-etc/
 
     Bug reports and patches are welcome.
 
@@ -54,6 +54,10 @@ DEPENDENCIES
     Make
 	Testing is only done with GNU Make but incompatibilities with other
 	make implementations are bugs. Please send patches.
+
+    Perl (optional)
+        Perl can be used to download the updated files from upstream. Suitable
+        files are provided in the distribution.
 
 INSTALLATION
 

@@ -4,6 +4,9 @@ This file only lists changes that may require attention from installers or
 data updates or internal changes.  For more complete news and news before
 version 2.10, see http://www.sethwklein.net/projects/iana-etc/
 
+Version 3.0
+    *   Use perl to download via FTP since HTTP is no longer available
+    *   Use xml format files instead of txt
 Version 2.30
     *	Changed the format of the port-aliases file.
 Version 2.20

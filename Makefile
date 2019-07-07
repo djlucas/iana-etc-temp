@@ -10,24 +10,22 @@ PREFIX=
 ETC_DIR=/etc
 
 AWK=gawk
-STRIP=no
-# STRIP=yes
+PERL=perl
 
-# sed -n 's/^\([^#:]*\):.*/\1/p' < Makefile | grep -v '^\(.PHONY\|.*-numbers.*\|protocols\|services\)$' | tr '\n' ' ' | sed 's/ $/\n/' | xclip
 .PHONY: all files get test test-services test-protocols install clean \
-	protocol-numbers.iana port-numbers.iana dist
+	protocol-numbers.xml service-names-port-numbers.xml dist
 
 all: files
 files: protocols services
 
-get: protocol-numbers.iana port-numbers.iana
+get: protocol-numbers.xml service-names-port-numbers.xml
 
 test: test-protocols test-services
 
-test-services: services test-lib.gawk test-services.gawk
+test-services: services
 	$(AWK) --re-interval -f test-lib.gawk -f test-services.gawk <services
 
-test-protocols: protocols test-lib.gawk test-protocols.gawk
+test-protocols: protocols
 	$(AWK) -f test-lib.gawk -f test-protocols.gawk <protocols
 
 install: files
@@ -38,41 +36,40 @@ install: files
 clean:
 	rm -vf \
 	    protocols services \
-	    protocol-numbers port-numbers \
-	    protocol-numbers.iana port-numbers.iana
+	    protocol-numbers service-names-port-numbers \
+	    protocol-numbers.xml service-names-port-numbers.xml
 
-protocol-numbers.iana:
-	$(AWK) -f get.gawk -v file=protocol-numbers >protocol-numbers.iana
-	rm -f protocol-numbers
+protocol-numbers.xml:
+	$(PERL) get.pl protocol-numbers
 
-port-numbers.iana:
-	$(AWK) -f get.gawk -v file=port-numbers >port-numbers.iana
-	rm -f port-numbers
+service-names-port-numbers.xml:
+	$(PERL) get.pl service-names-port-numbers
 
 protocol-numbers:
-ifeq (protocol-numbers.iana, $(wildcard protocol-numbers.iana))
-	ln -f -s protocol-numbers.iana protocol-numbers
+ifeq (protocol-numbers.xml, $(wildcard protocol-numbers.xml))
+	ln -f -s protocol-numbers.xml protocol-numbers
 else
 	ln -f -s protocol-numbers.dist protocol-numbers
 endif
 
-port-numbers:
-ifeq (port-numbers.iana, $(wildcard port-numbers.iana))
-	ln -f -s port-numbers.iana port-numbers
+servicee-names-port-numbers:
+ifeq (service-names-port-numbers.xml, $(wildcard service-names-port-numbers.xml))
+	ln -f -s service-names-port-numbers.xml service-names-port-numbers
 else
-	ln -f -s port-numbers.dist port-numbers
+	ln -f -s service-names-port-numbers.dist service-names-port-numbers
 endif
 
 protocols: protocol-numbers protocols.gawk
-	$(AWK) --re-interval -f protocols.gawk -v strip=$(STRIP) \
-	    protocol-numbers > protocols
+	$(AWK) -f protocols.gawk -F"[<>]" protocol-numbers > protocols
 
-services: port-numbers services.gawk
-	$(AWK) -f services.gawk -v strip=$(STRIP) port-numbers > services
+services: service-names-port-numbers services.gawk
+	$(AWK) -f services.gawk -F"[<>]" service-names-port-numbers > services
 
 dist: clean
-	rm -vrf ../iana-etc-`cat VERSION`
-	cp -a . ../iana-etc-`cat VERSION`
-	tar --owner=root --group=root  -vjf ../iana-etc-`cat VERSION`.tar.bz2 \
-	    -C .. -c iana-etc-`cat VERSION`
+	rm -vrf iana-etc-`cat VERSION`
+	cp -a . iana-etc-`cat VERSION`
+	tar --owner=root --group=root  -vjf iana-etc-`cat VERSION`.tar.bz2 \
+	    iana-etc-`cat VERSION`
+	mv iana-etc-`cat VERSION`.tar.bz2 ..
+	rm -vrf iana-etc-`cat VERSION`
 

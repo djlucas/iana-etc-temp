@@ -67,9 +67,9 @@ services: service-names-port-numbers services.gawk
 
 dist: clean
 	rm -vrf iana-etc-`cat VERSION`
-	cp -a . iana-etc-`cat VERSION`
-	tar --owner=root --group=root  -vjf iana-etc-`cat VERSION`.tar.bz2 \
+	cp -a . iana-etc-`cat VERSION` || true
+	tar --owner=root --group=root  -vJcf iana-etc-`cat VERSION`.tar.xz \
 	    iana-etc-`cat VERSION`
-	mv iana-etc-`cat VERSION`.tar.bz2 ..
-	rm -vrf iana-etc-`cat VERSION`
+	mv iana-etc-`cat VERSION`.tar.xz ..
+	rm -rf iana-etc-`cat VERSION`
 
